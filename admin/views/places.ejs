@@ -1,0 +1,154 @@
+<md-content class="main-content" ng-controller="PlaceCtrl">
+  <md-table-toolbar>
+    <div layout="row" layout-xs="column" class="padding">
+
+      <md-input-container class="md-block no-margin" md-no-float flex-gt-sm="25">
+        <input type="text" ng-model="query.canonical" translate-cloak="SEARCH" translate-attr="{ placeholder: 'SEARCH' }"
+          ng-keypress="$event.keyCode === 13 && onReload()">
+      </md-input-container>
+
+      <md-input-container class="md-block no-margin" md-no-float flex-gt-sm="25">
+        <label translate="CATEGORY" translate-cloak="CATEGORY"></label>
+        <md-autocomplete md-clear-button="false"
+          md-input-name="category" md-min-length="3" md-delay="400" md-no-cache="true" md-selected-item="query.category"
+          md-search-text="searchText" md-items="category in queryCategories(searchText)"
+          md-selected-item-change="onReload()" md-item-text="category.title">
+          <md-item-template>
+            <span md-highlight-text="searchText">{{ category.title }}</span>
+          </md-item-template>
+          <md-not-found translate="NO_MATCHES_FOUND" translate-cloak="NO_MATCHES_FOUND">
+          </md-not-found>
+        </md-autocomplete>
+      </md-input-container>
+
+      <md-input-container class="md-block no-margin" md-no-float flex-gt-sm="25">
+        <label translate="STATUS" translate-cloak="STATUS"></label>
+        <md-select ng-model="query.status" ng-change="onReload()">
+          <md-option ng-value="null" translate="ALL" translate-cloak="ALL">
+          </md-option>
+          <md-option value="Pending" translate="PENDING" translate-cloak="PENDING">
+          </md-option>
+          <md-option value="Approved" translate="APPROVED" translate-cloak="APPROVED">
+          </md-option>
+          <md-option value="Rejected" translate="REJECTED" translate-cloak="REJECTED">
+          </md-option>
+          <md-option value="Expired" translate="EXPIRED" translate-cloak="EXPIRED">
+          </md-option>
+        </md-select>
+      </md-input-container>
+
+      <span flex></span>
+      <md-button class="md-primary md-raised" md-colors="::{ color: 'white' }" aria-label="New"
+        ng-click="onEdit($event)" translate="CREATE" translate-cloak="CREATE">
+      </md-button>
+
+    </div>
+    <div layout="row" layout-xs="column" layout-sm="column" class="padding" layout-align-gt-sm="start center">
+      <md-checkbox aria-label="Featured" ng-change="onReload()" ng-model="query.isFeatured" flex-gt-xs>
+        <span translate="FEATURED" translate-cloak="FEATURED"></span>
+      </md-checkbox>
+    </div>
+  </md-table-toolbar>
+
+  <md-table-container>
+    <table md-table md-progress="promise">
+      <thead md-head>
+        <tr md-row>
+          <th md-column></th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="CATEGORY" translate-cloak="CATEGORY"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="RATING" translate-cloak="RATING"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="FEATURED" translate-cloak="FEATURED"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="STATUS" translate-cloak="STATUS"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="PACKAGE" translate-cloak="PACKAGE"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="EXPIRES_AT" translate-cloak="EXPIRES_AT"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="CREATED_AT" translate-cloak="CREATED_AT"></span>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody md-body>
+        <tr md-row ng-repeat="place in places">
+          <td md-cell>
+            <img class="img-thumb img-circle" ng-src="/images/placeholder.png"
+              actual-src="{{ place.imageThumb.url() }}" />
+            {{:: place.title }}
+          </td>
+          <td md-cell class="text-center">{{:: place.categories.join(', ') }}</td>
+          <td md-cell class="text-center">
+            <star-rating ng-model="place.ratingAvg" readonly="true">
+            </star-rating>
+          </td>
+          <td md-cell class="text-center">
+            <span ng-if="place.isFeatured" translate="YES" translate-cloak="YES">
+            </span>
+            <span ng-if="!place.isFeatured" translate="NO" translate-cloak="NO">
+            </span><br />
+            <span ng-if="place.featuredExpiresAt">
+              <span translate="EXPIRES_AT" translate-cloak="EXPIRES_AT"></span>:
+              {{ place.featuredExpiresAt | date:'mediumDate' }}
+            </span>
+          </td>
+          <td md-cell class="text-center">
+            <md-select class="label" aria-label="{{ 'CHANGE_STATUS' | translate }}" ng-model="place.status" ng-class="{ 'green': place.status === 'Approved',
+						'red': place.status === 'Rejected',
+						'purple': place.status === 'Expired',
+						'yellow': place.status === 'Pending' }">
+              <md-option value="Pending" ng-click="onChangeStatus(place, 'Pending')" translate="PENDING" translate-cloak="PENDING">
+              </md-option>
+              <md-option value="Approved" ng-click="onChangeStatus(place, 'Approved')" translate="APPROVED" translate-cloak="APPROVED">
+              </md-option>
+              <md-option value="Rejected" ng-click="onChangeStatus(place, 'Rejected')" translate="REJECTED" translate-cloak="REJECTED">
+              </md-option>
+              <md-option value="Expired" ng-click="onChangeStatus(place, 'Expired')" translate="EXPIRED" translate-cloak="EXPIRED">
+              </md-option>
+            </md-select>
+          </td>
+          <td md-cell class="text-center">
+            {{ place.userPackage.package.name }}<br />
+            <span class="label text-xs" ng-class="::{ 'green': place.userPackage.status === 'paid','yellow': place.userPackage.status === 'unpaid' }">
+            {{ place.userPackage.status | uppercase | translate }}
+          </span>
+          </td>
+          <td md-cell class="text-center">
+            <span class="link" ng-if="!place.expiresAt" ng-click="onExpiresAtClicked($event, place)">
+              <span translate="UPDATE_EXPIRATION" translate-cloak="UPDATE_EXPIRATION"></span>
+            </span>
+            <span ng-if="place.expiresAt">
+              {{ place.expiresAt | date:'mediumDate' }}<br/>
+              <span class="link"  ng-click="onExpiresAtClicked($event, place)" translate="UPDATE_EXPIRATION" translate-cloak="UPDATE_EXPIRATION"></span>
+            </span>
+          </td>
+          <td md-cell class="text-center">{{ place.createdAt | date:'mediumDate' }}</td>
+          <td md-cell>
+            <section layout="row" layout-align="center center">
+              <md-button class="md-icon-button md-primary" ng-click="onEdit($event, place)" aria-label="Edit">
+                <ng-md-icon icon="mode_edit"></ng-md-icon>
+              </md-button>
+              <md-button class="md-icon-button md-primary" ng-click="onDelete($event, place)" aria-label="Delete">
+                <ng-md-icon icon="clear"></ng-md-icon>
+              </md-button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+  <md-table-pagination md-limit-options="rowOptions" md-limit="query.limit" md-page="query.page"
+    md-total="{{query.total}}" md-on-paginate="onPaginationChange"
+    md-label="{ rowsPerPage: '{{ 'ROWS_PER_PAGE' | translate }}', of: '{{ 'OF' | translate }}' }">
+  </md-table-pagination>
+
+</md-content>

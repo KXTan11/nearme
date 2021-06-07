@@ -1,0 +1,47 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" fixed>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'MY_FAVORITES' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #container scrollEvents="true" class="ion-padding">
+
+  <ion-refresher slot="fixed" (ionRefresh)="onReload($event)">
+    <ion-refresher-content pullingText="{{ 'PULL_TO_REFRESH' | translate }}" refreshingText="{{ 'REFRESHING' | translate }}">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <empty-view *ngIf="isErrorViewVisible" icon="alert-circle-outline" [text]="'ERROR_NETWORK' | translate">
+  </empty-view>
+
+  <empty-view *ngIf="isEmptyViewVisible" icon="heart" [text]="'EMPTY_FAVORITES' | translate">
+  </empty-view>
+
+  <ion-grid fixed>
+
+    <ion-row *ngIf="isLoadingViewVisible">
+      <ion-col size-xs="12" size-sm="6" size-md="6" size-lg="4" *ngFor="let item of skeletonArray">
+        <ngx-skeleton-loader count="1" appearance="circle" [theme]="{ width: '100%', height: '200px', 'border-radius': '0' }">
+        </ngx-skeleton-loader>
+      </ion-col>
+    </ion-row>
+
+    <ion-row [@staggerIn]="places.length">
+      <ion-col size-xs="12" size-sm="6" size-md="6" size-lg="4" *ngFor="let place of places">
+        <app-place-card [routerLink]="['../places/' + place.id + '/' + place.slug]"
+          [place]="place"
+          [extraParams]="{ location: location, unit: preference.unit }"
+          [customObservable]="loadAndScroll">
+        </app-place-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-infinite-scroll *ngIf="isContentViewVisible" (ionInfinite)="onLoadMore($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>

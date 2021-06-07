@@ -1,0 +1,103 @@
+<md-dialog flex="100" flex-gt-xs="50" aria-label="Dialog Category">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2 ng-show="obj.isNew()">{{ 'NEW' | translate }}</h2>
+      <h2 ng-show="!obj.isNew()">{{ 'EDIT' | translate }} {{::obj.title }}</h2>
+      <span flex></span>
+      <ng-md-icon icon="close" class="icon-close" ng-click="onClose()"
+        aria-label="Close dialog">
+      </ng-md-icon>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content>
+    <div class="md-dialog-content">
+
+      <form name="form" role="form" novalidate>
+
+        <div class="no-padding" layout="row" layout-xs="column" layout-sm="column" layout-padding>
+          
+          <div flex-gt-sm="50" layout="column">
+                
+            <md-input-container class="md-block">
+              <label>{{ 'TITLE' | translate }}</label>
+              <input required name="title" ng-model="obj.title" placeholder>
+              <div ng-messages="form.title.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+        
+            <md-input-container class="md-block">
+              <label>{{ 'ORDER' | translate }}</label>
+              <input type="number" name="order" min="0"
+                ng-model="obj.order" required placeholder>
+              <div ng-messages="form.order.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+        
+            <md-input-container class="md-block">
+              <label>{{ 'STATUS' | translate }}</label>
+              <md-select name="status" required placeholder ng-model="obj.status">
+                <md-option value="Active">{{ 'ACTIVE' | translate }}</md-option>
+                <md-option value="Inactive">{{ 'INACTIVE' | translate }}</md-option>
+              </md-select>
+              <div ng-messages="form.status.$error">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <md-checkbox ng-model="obj.isFeatured"
+                aria-label="{{ 'SHOW_ON_HOME' | translate }}">
+                {{ 'SHOW_ON_HOME' | translate }}
+              </md-checkbox>
+            </md-input-container>
+
+          </div>
+
+          <div flex-gt-sm="50" layout="column">
+              
+            <div layout="row">
+              <div flex="100" class="box-picture img-box"
+                ng-style="{ 'background-image': obj.image ? 'url(' + obj.image.url() + ')' : 'url(/images/placeholder.jpg)' }">
+              </div>
+            </div>
+
+            <div layout="row" layout-align="start center">
+              <md-input-container md-no-float>
+                <input type="text" value="{{ obj.image.name() }}" disabled
+                  placeholder="{{ 'UPLOAD_PICTURE' | translate }}" />
+              </md-input-container>
+              <ng-md-icon icon="photo_camera" class="photo-camera"
+                ng-class="{ 'icon-active': obj.image.url() }"
+                ngf-select="uploadImage($file, $invalidFile)"
+                ngf-pattern="'image/*'" accept="image/*">
+                <md-tooltip>
+                  {{ 'CHOOSE_FILE' | translate }}
+                </md-tooltip>
+              </ng-md-icon>
+              <md-progress-circular class="md-primary" md-diameter="30"
+                ng-if="isUploading">
+              </md-progress-circular>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row">
+    <md-button ng-click="onClose()">
+      {{ 'CLOSE' | translate }}
+    </md-button>
+    <span flex></span>
+    <md-button class="md-raised md-primary"
+      ng-disabled="!form.$valid || isSaving"
+      ng-click="onSubmit(form.$valid)">
+      {{ !isSaving ? ('SAVE' | translate) : ('SAVING' | translate) }}
+    </md-button>
+  </md-dialog-actions>
+
+</md-dialog>

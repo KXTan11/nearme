@@ -1,0 +1,66 @@
+<md-content class="main-content" ng-controller="CategoryCtrl">
+  <md-table-toolbar>
+    <div layout="row" layout-xs="column" class="padding" layout-align-gt-sm="start center">
+
+      <md-input-container class="md-block no-margin padding-bottom" md-no-float flex-gt-sm="33">
+        <input type="text" translate-cloak="SEARCH" translate-attr="{ placeholder: 'SEARCH' }" ng-model="query.canonical"
+          ng-keypress="$event.keyCode === 13 && onRefresh()">
+      </md-input-container>
+
+      <span flex></span>
+      <md-button class="md-primary md-raised" md-colors="::{ color: 'white' }" aria-label="New"
+        ng-click="onEdit($event)" translate="CREATE" translate-cloak="CREATE">
+      </md-button>
+
+    </div>
+  </md-table-toolbar>
+  <md-table-container>
+    <table md-table md-progress="promise">
+      <thead md-head md-order="query.order" md-trigger="onOrderChange">
+        <tr md-row>
+          <th md-column></th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="SORT" translate-cloak="SORT"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="STATUS" translate-cloak="STATUS"></span>
+          </th>
+          <th md-column></th>
+        </tr>
+      </thead>
+      <tbody md-body>
+        <tr md-row ng-repeat="category in categories">
+          <td md-cell>
+            <img class="img-thumb img-circle" ng-src="/images/placeholder.png"
+              actual-src="{{ category.imageThumb.url() }}" />
+            {{:: category.title }}
+          </td>
+          <td md-cell class="text-center">{{:: category.order }}</td>
+          <td md-cell class="text-center">
+            <md-select class="label" aria-label="{{ 'CHANGE_STATUS' | translate }}" ng-model="category.status"
+              ng-class="::{ yellow: category.isInactive(), green: category.isActive() }">
+              <md-option value="Active" ng-click="onChangeStatus(category, 'Active')" translate="ACTIVE" translate-cloak="ACTIVE">
+              </md-option>
+              <md-option value="Inactive" ng-click="onChangeStatus(category, 'Inactive')" translate="INACTIVE" translate-cloak="INACTIVE">
+              </md-option>
+            </md-select>
+          </td>
+          <td md-cell>
+            <section layout="row" layout-align="center center">
+              <md-button class="md-icon-button md-primary" ng-click="onEdit($event, category)" aria-label="Edit">
+                <ng-md-icon icon="mode_edit"></ng-md-icon>
+              </md-button>
+              <md-button class="md-icon-button md-primary" ng-click="onDelete($event, category)" aria-label="Delete">
+                <ng-md-icon icon="clear"></ng-md-icon>
+              </md-button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+  <md-table-pagination md-limit-options="rowOptions" md-limit="query.limit" md-page="query.page"
+    md-total="{{query.total}}" md-on-paginate="onPaginationChange"
+    md-label="{ rowsPerPage: '{{ 'ROWS_PER_PAGE' | translate }}', of: '{{ 'OF' | translate }}' }">
+  </md-table-pagination>
+</md-content>

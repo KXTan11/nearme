@@ -1,0 +1,27 @@
+<ion-item button lines="none" (click)="goToPlace()">
+  <ion-thumbnail slot="start" *ngIf="place.imageThumb">
+    <img [src]="place.imageThumb?.url()" [alt]="place.title" src-fallback="./assets/img/placeholder.png" />
+  </ion-thumbnail>
+  <ion-label>
+    <h2 class="bold no-margin ellipsis">
+      <ion-text color="dark">
+        {{ place.title }}
+      </ion-text>
+    </h2>
+    <ion-text color="medium">
+      <p class="no-margin">
+        {{ place.categories.join(' &bull; ') }}
+      </p>
+    </ion-text>
+    <bar-rating *ngIf="place.ratingAvg" class="rating" [rate]="place.rating" [readOnly]="true" [max]="5"
+      [theme]="'stars'"></bar-rating>
+  </ion-label>
+
+  <div slot="end">
+    <ion-text color="primary">
+      <span class="bold">
+        {{ place.distance(location, unit) }}
+      </span>
+    </ion-text>
+  </div>
+</ion-item>

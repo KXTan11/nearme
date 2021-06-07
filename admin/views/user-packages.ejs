@@ -1,0 +1,104 @@
+<md-content class="main-content" ng-controller="UserPackageCtrl">
+  <md-table-toolbar>
+    <div layout="row" layout-xs="column" layout-padding layout-align-gt-sm="start center">
+      <md-input-container class="md-block" flex="100" flex-gt-sm="25">
+        <label translate="USER" translate-cloak="USER"></label>
+        <md-autocomplete md-selected-item-change="onRefresh()" md-selected-item="query.user" md-clear-button="false"
+          md-no-cache="true" md-search-text="searchText" md-items="user in queryUsers(searchText)"
+          md-item-text="user.name">
+          <md-item-template>
+            <span md-highlight-text="searchText">
+              {{ user.name }}
+            </span>
+            <span ng-if="user.authData.facebook">(Facebook)</span>
+            <span ng-if="user.authData.google">(Google)</span>
+            <span ng-if="user.authData.apple">(Apple)</span>
+            <span ng-if="!user.authData">({{ user.username }})</span>
+          </md-item-template>
+        </md-autocomplete>
+      </md-input-container>
+      <md-input-container class="md-block no-margin" flex="100" flex-gt-sm="25">
+        <label translate="STATUS" translate-cloak="STATUS"></label>
+        <md-select ng-model="query.status" ng-change="onRefresh()">
+          <md-option ng-value="null" translate="ALL" translate-cloak="ALL">
+          </md-option>
+          <md-option value="paid" translate="PAID" translate-cloak="PAID">
+          </md-option>
+          <md-option value="unpaid" translate="UNPAID" translate-cloak="UNPAID">
+          </md-option>
+        </md-select>
+      </md-input-container>
+      <span flex></span>
+    </div>
+  </md-table-toolbar>
+  <md-table-container>
+    <table md-table md-progress="promise">
+      <thead md-head md-on-reorder="onReorder">
+        <tr md-row>
+          <th class="text-center text-uppercase bold" md-column>
+            <span translate="PACKAGE_NAME" translate-cloak="PACKAGE_NAME"></span>
+          </th>
+          <th class="text-center text-uppercase bold" md-column>
+            <span translate="USER" translate-cloak="USER"></span>
+          </th>
+          <th class="text-center text-uppercase bold" md-column>
+            <span translate="PRICE" translate-cloak="PRICE"></span>
+          </th>
+          <th class="text-center text-uppercase bold" md-column>
+            <span translate="STATUS" translate-cloak="STATUS"></span>
+          </th>
+          <th class="text-center text-uppercase bold" md-column>
+            <span translate="CREATED_AT" translate-cloak="CREATED_AT"></span>
+          </th>
+          <th md-column></th>
+        </tr>
+      </thead>
+      <tbody md-body>
+        <tr md-row ng-repeat="userPackage in userPackages">
+          <td md-cell class="text-center">
+            {{:: userPackage.package.name }}
+          </td>
+          <td md-cell class="text-center">
+            <span>
+              {{:: userPackage.user.name }}
+            </span>
+            <span ng-if="user.authData.facebook">(Facebook)</span>
+            <span ng-if="user.authData.google">(Google)</span>
+            <span ng-if="user.authData.apple">(Apple)</span>
+            <span ng-if="!user.authData">({{ userPackage.user.username }})</span>
+          </td>
+          <td md-cell class="text-center">
+            {{:: userPackage.package.finalPrice | currency: currencySymbol }}
+          </td>
+          <td md-cell class="text-center">
+            <span class="label" ng-class="::{ 'green': userPackage.isPaid(),
+              'yellow': userPackage.isUnpaid() }">
+              <span ng-if="userPackage.isPaid()" translate="PAID" translate-cloak="PAID">
+              </span>
+              <span ng-if="userPackage.isUnpaid()" translate="UNPAID" translate-cloak="UNPAID">
+              </span>
+            </span><br />
+            <span class="link" ng-click="onChargeClicked(userPackage)" ng-if="userPackage.charge" translate="CHARGE"
+                translate-cloak="CHARGE">
+              </span>
+          </td>
+          <td md-cell class="text-center">
+            {{ userPackage.createdAt | date:'mediumDate' }}
+          </td>
+          <td md-cell>
+            <section layout="row" layout-align="center center">
+              <md-button class="md-icon-button md-primary" ng-click="onDelete($event, userPackage)"
+                aria-label="{{ 'DELETE' | translate }}">
+                <ng-md-icon icon="clear"></ng-md-icon>
+              </md-button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+  <md-table-pagination md-limit-options="rowOptions" md-limit="query.limit" md-page="query.page"
+    md-total="{{query.total}}" md-on-paginate="onPaginationChange"
+    md-label="{ rowsPerPage: '{{ 'ROWS_PER_PAGE' | translate }}', of: '{{ 'OF' | translate }}' }">
+  </md-table-pagination>
+</md-content>

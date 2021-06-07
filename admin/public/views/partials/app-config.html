@@ -1,0 +1,181 @@
+<md-dialog flex="100" flex-gt-xs="50" aria-label="App Config dialog">
+
+  <form name="form" role="form" novalidate>
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{ 'APP_CONFIG' | translate }}</h2>
+        <span flex></span>
+        <ng-md-icon aria-label="Close dialog" icon="close" class="icon-close" ng-click="hide()">
+        </ng-md-icon>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="{{ 'GENERAL' | translate }}">
+          <md-content layout="column" layout-padding>
+
+            <p class="md-subhead bold">
+              AdMob
+            </p>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.adMob.disabled" ng-change="obj.adMob = obj.adMob">
+                {{ 'DISABLE' | translate }}
+              </md-checkbox>
+            </div>
+
+            <p class="md-subhead bold">
+              {{ 'SLIDE_INTRO_SETTINGS' | translate }}
+            </p>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.slides.disabled" ng-change="obj.slides = obj.slides">
+                {{ 'DISABLE' | translate }}
+              </md-checkbox>
+            </div>
+
+            <p class="md-subhead bold">
+              {{ 'PLACE_SETTINGS' | translate }}
+            </p>
+
+            <div layout="row">
+              <md-input-container class="md-block" flex flex-gt-xs="50">
+                <label>{{ 'SEARCH_RADIUS' | translate }} ({{ 'METERS' | translate }})</label>
+                <input placeholder type="number" min="0" ng-model="obj.places.searchRadius" ng-change="obj.places = obj.places">
+              </md-input-container>
+            </div>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.places.enablePaidListings" ng-change="obj.places = obj.places">
+                {{ 'ENABLE_PACKAGES' | translate }}
+              </md-checkbox>
+            </div>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.places.enablePromotedListings" ng-change="obj.places = obj.places">
+                {{ 'ENABLE_PROMOTED_LISTINGS' | translate }}
+              </md-checkbox>
+            </div>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.places.autoApprove" ng-change="obj.places = obj.places">
+                {{ 'AUTO_APPROVE_ENABLED' | translate }}
+              </md-checkbox>
+            </div>
+
+            <p class="md-subhead bold">
+              {{ 'REVIEW_SETTINGS' | translate }}
+            </p>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.reviews.disabled" ng-change="onReviewEnabledChange()">
+                {{ 'DISABLE' | translate }}
+              </md-checkbox>
+            </div>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.reviews.autoApprove" ng-disabled="obj.reviews.disabled">
+                {{ 'AUTO_APPROVE_ENABLED' | translate }}
+              </md-checkbox>
+            </div>
+
+            <div layout="row">
+              <md-checkbox ng-model="obj.reviews.multiplePerUser" ng-disabled="obj.reviews.disabled">
+                {{ 'REVIEW_MULTIPLE_ENABLED' | translate }}
+              </md-checkbox>
+            </div>
+
+          </md-content>
+        </md-tab>
+        <md-tab label="{{ 'ABOUT' | translate }}">
+          <md-content layout="column" layout-padding>
+
+            <p class="md-title">{{ 'MOBILE_APP_CONFIG' | translate }}</p>
+            <p class="md-body-1 no-margin">{{ 'ABOUT' | translate }}</p>
+            <trix-editor class="margin-bottom" angular-trix ng-model="obj.about.description">
+            </trix-editor>
+            <md-input-container flex>
+              <label>{{ 'CONTACT_EMAIL' | translate }}</label>
+              <input placeholder name="email" type="text" ng-model="obj.about.email">
+            </md-input-container>
+            <md-input-container flex>
+              <label>{{ 'CONTACT_PHONE' | translate }}</label>
+              <input placeholder name="phone" type="text" ng-model="obj.about.phone">
+            </md-input-container>
+            <md-input-container flex>
+              <label>{{ 'FACEBOOK' | translate }}</label>
+              <input placeholder name="facebook" type="text" ng-model="obj.about.facebook">
+            </md-input-container>
+            <md-input-container flex>
+              <label>{{ 'INSTAGRAM' | translate }}</label>
+              <input placeholder name="instagram" type="text" ng-model="obj.about.instagram">
+            </md-input-container>
+            <md-input-container flex>
+              <label>{{ 'YOUTUBE' | translate }}</label>
+              <input placeholder name="youtube" type="text" ng-model="obj.about.youtube">
+            </md-input-container>
+
+          </md-content>
+        </md-tab>
+        <md-tab label="{{ 'LOGIN' | translate }}">
+          <md-content layout="column" layout-padding>
+
+            <div>
+
+              <div layout="row">
+                <md-input-container class="no-margin">
+                  <md-checkbox aria-label="Enable Facebook Login" ng-change="obj.auth = obj.auth"
+                    ng-model="obj.auth.isFacebookLoginEnabled">
+                    Facebook Login
+                  </md-checkbox>
+                </md-input-container>
+              </div>
+
+              <div layout="row">
+                <md-input-container class="no-margin">
+                  <md-checkbox aria-label="Enable Google Login" ng-change="obj.auth = obj.auth"
+                    ng-model="obj.auth.isGoogleLoginEnabled">
+                    Google Login
+                  </md-checkbox>
+                </md-input-container>
+              </div>
+
+              <div layout="row">
+                <md-input-container class="no-margin">
+                  <md-checkbox aria-label="Enable Google Login" ng-change="obj.auth = obj.auth"
+                    ng-model="obj.auth.isAppleLoginEnabled">
+                    Apple Login (iOS)
+                  </md-checkbox>
+                </md-input-container>
+              </div>
+            </div>
+
+          </md-content>
+        </md-tab>
+        <md-tab label="{{ 'EMAIL_SETTINGS' | translate }}">
+          <md-content layout="column" layout-padding>
+            <div layout="row">
+              <md-input-container class="md-block" flex flex-gt-xs="50">
+                <label>{{ 'EMAIL_FOR_NOTIFICATIONS' | translate }}</label>
+                <input type="email" placeholder ng-model="obj.email.addressForNotifications">
+              </md-input-container>
+            </div>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button ng-click="hide()">
+        {{ 'CLOSE' | translate }}
+      </md-button>
+      <span flex></span>
+      <md-button type="submit" class="md-raised md-primary" ng-disabled="form.$invalid" ng-click="onSave()">
+        {{ !isSaving ? ('SAVE' | translate) : ('SAVING' | translate) }}
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

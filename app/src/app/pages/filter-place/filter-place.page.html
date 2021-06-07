@@ -1,0 +1,80 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title></ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onDismiss()">
+        <ion-icon slot="start" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+
+  <div class="ion-padding-bottom">
+    <ion-item lines="none" class="ion-margin-top">
+      <ion-checkbox (ionChange)="onQueryChanged($event)" [(ngModel)]="query.featured" [disabled]="isLoading">
+      </ion-checkbox>
+      <ion-label class="ion-margin-horizontal" color="medium">
+        {{ 'FEATURED' | translate }}
+      </ion-label>
+    </ion-item>
+  </div>
+
+  <div class="ion-margin-top">
+    <ion-text color="medium">
+      <h5 class="text-normal">
+        {{ 'RATING' | translate }}
+      </h5>
+    </ion-text>
+
+    <ion-item lines="none" class="ion-padding-bottom">
+      <ion-range mode="md" debounce="1500" color="secondary" dualKnobs="true" pin="true" [min]="minRating" [max]="maxRating"
+        [disabled]="isLoading" [(ngModel)]="query.rating" (ionChange)="onRangeChanged($event)">
+        <ion-icon name="star-outline" color="medium" slot="start"></ion-icon>
+        <ion-icon name="star" color="warning" slot="end"></ion-icon>
+      </ion-range>
+    </ion-item>
+  </div>
+
+  <div class="ion-margin-bottom">
+    <ion-text color="medium">
+      <h5 class="text-normal">
+        {{ 'DISTANCE' | translate }}
+      </h5>
+    </ion-text>
+    <ion-item lines="none" class="ion-padding-bottom">
+      <ion-range mode="md" debounce="1500" color="secondary" dualKnobs="false" pin="true" [min]="minDistance" [max]="maxDistance"
+        [disabled]="isLoading" [(ngModel)]="query.distance" (ionChange)="onRangeChanged($event)">
+        <ion-label class="text-medium" slot="start">
+          {{ this.minDistance }} {{ preference.unit }}
+        </ion-label>
+        <ion-label class="text-medium" slot="end">
+          {{ this.maxDistance }} {{ preference.unit }}
+        </ion-label>
+      </ion-range>
+    </ion-item>
+  </div>
+
+  <app-accordion [name]="'CATEGORIES' | translate">
+    <ion-item *ngFor="let category of categories;trackBy:trackByFn">
+      <ion-checkbox (ionChange)="onCategoryChanged($event)" [(ngModel)]="category.isChecked" [disabled]="isLoading">
+      </ion-checkbox>
+      <ion-label class="ion-margin-horizontal" color="medium">
+        {{ category.name }}
+      </ion-label>
+    </ion-item>
+  </app-accordion>
+
+</ion-content>
+
+<ion-footer class="ion-padding ion-text-center">
+  <ion-button strong color="primary" [disabled]="isLoading" (click)="onApplyButtonTouched()">
+    <span *ngIf="!isLoading">
+      {{ 'SEE_THE_RESULTS' | translate }} ({{ count }})
+    </span>&nbsp;
+    <span *ngIf="isLoading">
+      <ion-spinner name="dots" color="light"></ion-spinner>
+    </span>
+  </ion-button>
+</ion-footer>

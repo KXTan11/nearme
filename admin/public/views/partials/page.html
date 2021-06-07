@@ -1,0 +1,53 @@
+<md-dialog flex="100" flex-gt-xs="60" aria-label="dialog">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span ng-if="obj.isNew()">{{ 'NEW' | translate }}</span>
+      <span ng-if="!obj.isNew()">{{ 'EDIT' | translate }}</span>
+      <span flex></span>
+      <ng-md-icon icon="close" class="icon-close" ng-click="onClose()" aria-label="Close dialog">
+      </ng-md-icon>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <div class="md-dialog-content">
+      <form name="form" novalidate>
+
+        <div layout="row">
+          <md-input-container class="md-block">
+            <label>{{ 'PAGE_TITLE' | translate }}</label>
+            <input name="title" placeholder required ng-model="obj.title">
+            <div ng-messages="form.title.$error">
+              <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+            </div>
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container class="md-block">
+            <label>{{ 'STATUS' | translate }}</label>
+            <md-select name="status" required placeholder ng-model="obj.status">
+              <md-option value="Active">{{ 'ACTIVE' | translate }}</md-option>
+              <md-option value="Inactive">{{ 'INACTIVE' | translate }}</md-option>
+            </md-select>
+            <div ng-messages="form.status.$error">
+              <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+            </div>
+          </md-input-container>
+        </div>
+
+        <div>
+          <trix-editor angular-trix ng-model="obj.content"></trix-editor>
+        </div>
+      </form>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <span flex></span>
+    <md-button ng-click="onClose()">
+      {{ 'CLOSE' | translate }}
+    </md-button>
+    <md-button class="md-raised md-primary" ng-disabled="!form.$valid || isSaving" ng-click="onSubmit(form.$valid)">
+      {{ !isSaving ? ('SAVE' | translate) : ('SAVING' | translate) }}
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

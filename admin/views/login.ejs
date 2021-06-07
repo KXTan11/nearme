@@ -1,0 +1,31 @@
+<md-content class="login-content" layout layout-align="center">
+  <md-card flex-gt-sm="33" flex-gt-md="25" flex="100">
+    <% if (locals.flash) { %>
+    <md-toolbar class="md-accent">
+        <p class="md-toolbar-tools">
+          <small><%= flash %> </small>
+        </p>
+      </md-toolbar>
+      <br>
+    <% } %>
+    <form name="form" action="/auth/login" method="post" novalidate>
+      <md-card-content layout="column">
+        <md-input-container>
+          <label translate="USERNAME" translate-cloak="USERNAME"></label>
+          <input type="text" name="username" placeholder>
+        </md-input-container>
+        <md-input-container>
+          <label translate="PASSWORD" translate-cloak="PASSWORD"></label>
+          <input type="password" placeholder autocomplete="new-password" name="password">
+        </md-input-container>
+      </md-card-content>
+      <div class="md-actions" layout="row">
+        <md-button href="/auth/reset-password" md-no-ink translate="FORGOT_PASSWORD" translate-cloak="FORGOT_PASSWORD">
+        </md-button>
+        <span flex></span>
+        <md-button type="submit" md-no-ink class="md-primary" translate="LOGIN" translate-cloak="LOGIN">
+        </md-button>
+      </div>
+    </form>
+  </md-card>
+</md-content>

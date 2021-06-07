@@ -1,0 +1,63 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" fixed>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'POSTS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #container scrollEvents="true" class="ion-padding">
+
+  <ion-refresher slot="fixed" (ionRefresh)="onReload($event)">
+    <ion-refresher-content pullingText="{{ 'PULL_TO_REFRESH' | translate }}" refreshingText="{{ 'REFRESHING' | translate }}">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <empty-view *ngIf="isErrorViewVisible" icon="alert-circle-outline" [text]="'ERROR_NETWORK' | translate">
+  </empty-view>
+
+  <empty-view *ngIf="isEmptyViewVisible" icon="alert-circle-outline" [text]="'EMPTY_POSTS' | translate">
+  </empty-view>
+
+  <ion-grid fixed>
+
+    <ion-row *ngIf="isLoadingViewVisible">
+      <ion-col size-xs="12" size-sm="6" size-md="6" size-lg="4" *ngFor="let item of skeletonArray">
+        <ngx-skeleton-loader count="1" appearance="circle" [theme]="{ width: '100%', height: '200px', 'border-radius': '0' }">
+        </ngx-skeleton-loader>
+      </ion-col>
+    </ion-row>
+
+    <ion-row [@staggerIn]="posts.length">
+      <ion-col size-xs="12" size-sm="6" size-md="6" size-lg="4" *ngFor="let post of posts">
+
+        <ion-card button class="shadow ion-no-margin ion-margin-bottom" color="white"
+          [routerLink]="['./' + post.id + '/' + post.slug]">
+
+          <div class="bg-img" defaultImage="./assets/img/placeholder.png"
+            [lazyLoad]="post.image?.url()"
+            [customObservable]="loadAndScroll">
+          </div>
+
+          <ion-card-content>
+            <div class="ion-text-nowrap">
+              <h3 class="bold">{{ post.title }}</h3>
+            </div>
+            <div class="multi-ellipsis">
+              <ion-text color="medium">
+                <p>{{ post.body }}</p>
+              </ion-text>
+            </div>
+          </ion-card-content>
+
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-infinite-scroll *ngIf="isContentViewVisible" (ionInfinite)="onLoadMore($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+  </ion-grid>
+</ion-content>

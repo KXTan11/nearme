@@ -1,0 +1,47 @@
+<ion-tabs>
+
+  <ion-tab-bar slot="bottom" color="primary" *ngIf="platform.is('mobile')" fixed>
+    <ion-tab-button tab="home" layout="icon-top" (click)="handleTabClick($event)">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>{{ 'HOME' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="categories" layout="icon-top" (click)="handleTabClick($event)">
+      <ion-icon name="location"></ion-icon>
+      <ion-label>{{ 'PLACES' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="posts" layout="icon-top" (click)="handleTabClick($event)">
+      <ion-icon name="notifications"></ion-icon>
+      <ion-label>{{ 'POSTS' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile" layout="icon-top" (click)="handleTabClick($event)">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>{{ 'PROFILE' | translate }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+  <ion-tab-bar slot="top" color="primary" *ngIf="platform.is('desktop')" fixed>
+    <ion-tab-button tab="home" layout="icon-start" (click)="handleTabClick($event)">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>{{ 'HOME' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="categories" layout="icon-start" (click)="handleTabClick($event)">
+      <ion-icon name="location"></ion-icon>
+      <ion-label>{{ 'PLACES' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="posts" layout="icon-start" (click)="handleTabClick($event)">
+      <ion-icon name="notifications"></ion-icon>
+      <ion-label>{{ 'POSTS' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile" layout="icon-start" (click)="handleTabClick($event)">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>{{ 'PROFILE' | translate }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+</ion-tabs>

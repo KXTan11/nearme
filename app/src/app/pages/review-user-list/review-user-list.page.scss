@@ -1,0 +1,43 @@
+ion-avatar {
+  margin: 0 12px 0 0 !important;
+
+  img {
+    background: var(--ion-color-dark);
+  }
+}
+
+ul {
+  margin: 4px 0;
+  padding: 0px;
+
+  &.rating li {
+    padding: 5px 0 !important;
+    background: none;
+    color: var(--ion-color-primary);
+  }
+}
+
+.skeleton-item {
+  width: auto;
+  height: auto;
+  margin: 10px auto;
+  padding: 10px;
+
+  .wrapper {
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    flex: 1;
+
+    .avatar {
+      width: 100px;
+      height: 90px;
+    }
+
+    .title {
+      width: 100%;
+      padding: 10px;
+      height: 80px;
+    }
+  }
+}

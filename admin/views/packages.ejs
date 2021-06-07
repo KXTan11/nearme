@@ -1,0 +1,67 @@
+<md-content class="main-content" ng-controller="PackageCtrl">
+  <md-table-toolbar>
+    <div layout="row" layout-xs="column" layout-padding layout-align-gt-sm="start center">
+      <md-input-container class="md-block no-margin margin-right" md-no-float flex="100" flex-gt-sm="25">
+        <input type="text" translate-cloak="SEARCH" translate-attr="{ placeholder: 'SEARCH' }"
+          ng-model="query.canonical" ng-keypress="$event.keyCode === 13 && onRefresh()" />
+      </md-input-container>
+      <span flex></span>
+      <div layout="row">
+        <md-button class="md-primary md-raised no-margin" md-colors="::{ color: 'white' }" aria-label="New"
+          ng-click="onEdit($event)" translate="CREATE" translate-cloak="CREATE">
+        </md-button>
+      </div>
+    </div>
+  </md-table-toolbar>
+  <md-table-container>
+    <table md-table md-progress="promise">
+      <thead md-head md-on-reorder="onReorder">
+        <tr md-row>
+          <th class="text-center text-uppercase bold" md-column md-order-by="name">
+            <md-icon></md-icon>
+            <span translate="PACKAGE_NAME" translate-cloak="PACKAGE_NAME"></span>
+          </th>
+          <th class="text-center text-uppercase bold" md-column md-order-by="price">
+            <md-icon></md-icon>
+            <span translate="PRICE" translate-cloak="PRICE"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="STATUS" translate-cloak="STATUS"></span>
+          </th>
+          <th md-column></th>
+        </tr>
+      </thead>
+      <tbody md-body>
+        <tr md-row ng-repeat="package in packages">
+          <td md-cell class="text-center">{{:: package.name }}</td>
+          <td md-cell class="text-center">{{:: package.finalPrice | currency: currencySymbol }}</td>
+          <td md-cell class="text-center">
+            <md-select class="label" aria-label="{{ 'CHANGE_STATUS' | translate }}" ng-model="package.status"
+              ng-class="::{ yellow: package.isInactive(), green: package.isActive() }">
+              <md-option value="Active" ng-click="onChangeStatus(package, 'Active')" translate="ACTIVE" translate-cloak="ACTIVE">
+              </md-option>
+              <md-option value="Inactive" ng-click="onChangeStatus(package, 'Inactive')" translate="INACTIVE" translate-cloak="INACTIVE">
+              </md-option>
+            </md-select>
+          </td>
+          <td md-cell>
+            <section layout="row" layout-align="center center">
+              <md-button class="md-icon-button md-primary" ng-click="onEdit($event, package)"
+                aria-label="{{ 'EDIT' | translate }}">
+                <ng-md-icon icon="mode_edit"></ng-md-icon>
+              </md-button>
+              <md-button class="md-icon-button md-primary" ng-click="onDelete($event, package)"
+                aria-label="{{ 'DELETE' | translate }}">
+                <ng-md-icon icon="clear"></ng-md-icon>
+              </md-button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+  <md-table-pagination md-limit-options="rowOptions" md-limit="query.limit" md-page="query.page"
+    md-total="{{query.total}}" md-on-paginate="onPaginationChange"
+    md-label="{ rowsPerPage: '{{ 'ROWS_PER_PAGE' | translate }}', of: '{{ 'OF' | translate }}' }">
+  </md-table-pagination>
+</md-content>

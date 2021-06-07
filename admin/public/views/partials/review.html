@@ -1,0 +1,29 @@
+<md-dialog flex="100" flex-gt-xs="30" aria-label="Dialog Review">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>{{ obj.place.title }}</h2>
+      <span flex></span>
+      <ng-md-icon icon="close" class="icon-close" ng-click="onClose()" aria-label="Close dialog">
+      </ng-md-icon>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content>
+
+    <div class="md-dialog-content">
+
+      <div class="text-center">
+        <img width="80" height="80" class="img-circle" ng-src="/images/avatar.png"
+          actual-src="{{ obj.user.photo.url() }}" />
+
+        <h5 class="md-subhead no-margin">{{ obj.user.name }}</h5>
+
+        <star-rating ng-model="obj.rating" readonly="true">
+        </star-rating>
+      </div>
+
+      <p class="md-body-1">{{ obj.comment }}</p>
+
+    </div>
+  </md-dialog-content>
+</md-dialog>

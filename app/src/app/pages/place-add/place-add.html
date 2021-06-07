@@ -1,0 +1,185 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" fixed>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'ADD_PLACE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <empty-view *ngIf="isErrorViewVisible" icon="alert-circle-outline" [text]="'ERROR_NETWORK' | translate">
+  </empty-view>
+
+  <div class="ion-text-center" *ngIf="isLoadingViewVisible">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-grid fixed>
+
+    <ion-row class="ion-justify-content-center" [hidden]="!isContentViewVisible">
+      <ion-col class="ion-no-padding" size-xs="12" size-lg="8">
+
+        <div class="autocomplete">
+          <ion-searchbar class="text-medium" inputmode="search" color="light" debounce="600"
+            [placeholder]="'ENTER_ADDRESS' | translate" (ionInput)="onSearchAddress($event)">
+          </ion-searchbar>
+
+          <ion-list lines="none" class="shadow" *ngIf="suggestions.length" [@staggerIn]="suggestions.length">
+            <ion-item class="hover" button detail="false" *ngFor="let suggestion of suggestions"
+              (click)="onSuggestionTouched(suggestion)">
+              <ion-label>
+                <ion-text color="dark">
+                  <span class="link bold text-medium">
+                    {{ suggestion.description }}
+                  </span>
+                </ion-text>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <div #map class="map" id="map"></div>
+
+        <div class="scrollable">
+          <app-upload-box [text]="'FEATURED_IMAGE' | translate" (onFileUploaded)="onMainFileUploaded($event)">
+          </app-upload-box>
+          <app-upload-box *ngFor="let upload of uploads" (onFileUploaded)="onFileUploaded($event, upload)">
+          </app-upload-box>
+        </div>
+
+        <ion-list class="ion-padding">
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" #myForm="ngForm" novalidate>
+
+            <ion-list class="ion-margin-bottom" *ngIf="packages && packages.length">
+
+              <h5>
+                {{ 'CHOOSE_PACKAGE' | translate }} *
+              </h5>
+
+              <ion-radio-group mode="md" formControlName="package">
+                <ion-item-group>
+                  <ion-item-divider>
+                    <ion-label>{{ 'NEW_PACKAGE' | translate }}</ion-label>
+                  </ion-item-divider>
+                  <ion-item style="--min-height: 70px; --padding-start: 0" *ngFor="let package of packages">
+                    <ion-label class="ion-padding-start">
+                      <h2 *ngIf="package.salePrice && package.price > package.salePrice">
+                        {{ package.name }} - {{ package.finalPrice | currencyGlobal }}
+                        <s class="text-small">{{ package.price | currencyGlobal }}</s>
+                      </h2>
+                      <h2 *ngIf="package.price === package.finalPrice && package.finalPrice !== 0">
+                        {{ package.name }} - {{ package.finalPrice | currencyGlobal }}
+                      </h2>
+                      <h2 *ngIf="package.finalPrice === 0">
+                        {{ package.name }} - {{ 'FREE' | translate }}
+                      </h2>
+                      <p class="text-medium" [innerHTML]="package.description"></p>
+                    </ion-label>
+                    <ion-radio [value]="package.id" color="dark"></ion-radio>
+                  </ion-item>
+                </ion-item-group>
+
+                <ion-item-group *ngIf="userPackages.length">
+                  <ion-item-divider>
+                    <ion-label>{{ 'PURCHASED_PACKAGES' | translate }}</ion-label>
+                  </ion-item-divider>
+                  <ion-item style="--min-height: 70px; --padding-start: 0" *ngFor="let userPackage of userPackages">
+                    <ion-label class="ion-padding-start">
+                      <h2>{{ userPackage.package.name }}</h2>
+                      <p class="text-medium" [innerHTML]="userPackage.package.description"></p>
+                      <div>
+                        <ion-badge color="primary" *ngIf="userPackage.package.listingLimit">
+                          {{ userPackage.package.listingLimit - userPackage.usage }} {{ 'LEFT' | translate }}
+                        </ion-badge>
+                        <ion-badge class="ion-margin-horizontal" color="warning" *ngIf="userPackage.status === 'unpaid'">
+                          {{ 'WAITING_PAYMENT' | translate }}
+                        </ion-badge>
+                      </div>
+                    </ion-label>
+                    <ion-radio [value]="userPackage.id" [disabled]="userPackage.isInvalid()" color="dark"></ion-radio>
+                  </ion-item>
+                </ion-item-group>
+              </ion-radio-group>
+            </ion-list>
+
+            <ion-label position="stacked" color="medium">
+              <span>{{ 'PLACE_NAME' | translate }} *</span>
+            </ion-label>
+            <ion-item class="ion-margin-vertical" lines="none" color="light">
+              <ion-input type="text" formControlName="name"></ion-input>
+            </ion-item>
+
+            <div class="hide-xs-only">
+              <ion-label position="stacked" color="medium">
+                <span>{{ 'CATEGORY' | translate }} *</span>
+              </ion-label>
+              <ion-item class="ion-margin-vertical" lines="none" color="light">
+                <ion-label></ion-label>
+                <select formControlName="category" [compareWith]="compareCategory">
+                  <option *ngFor="let category of categories" [ngValue]="category">
+                    {{ category.title }}
+                  </option>
+                </select>
+              </ion-item>
+            </div>
+
+            <div class="hide-sm-up">
+              <ion-label position="stacked" color="medium">
+                <span>{{ 'CATEGORY' | translate }} *</span>
+              </ion-label>
+              <ion-item class="ion-margin-vertical" lines="none" color="light">
+                <ion-label></ion-label>
+                <ion-select formControlName="category" interface="popover" [okText]="'OK' | translate"
+                  [cancelText]="'CANCEL' | translate">
+                  <ion-select-option *ngFor="let category of categories" [value]="category">
+                    {{ category.title }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <ion-label position="stacked" color="medium">
+              <span>{{ 'DESCRIPTION' | translate }}</span>
+            </ion-label>
+            <ion-item class="ion-margin-vertical" lines="none" color="light">
+              <ion-textarea rows="4" formControlName="description"></ion-textarea>
+            </ion-item>
+
+            <ion-label position="stacked" color="medium">
+              <span>{{ 'WEBSITE' | translate }}</span>
+            </ion-label>
+            <ion-item class="ion-margin-vertical" lines="none" color="light">
+              <ion-input type="url" formControlName="website"></ion-input>
+            </ion-item>
+
+            <ion-label position="stacked" color="medium">
+              <span>{{ 'ADDRESS' | translate }}</span>
+            </ion-label>
+            <ion-item class="ion-margin-vertical" lines="none" color="light">
+              <ion-input type="text" formControlName="address"></ion-input>
+            </ion-item>
+
+            <ion-label position="stacked" color="medium">
+              <span>{{ 'PHONE' | translate }}</span>
+            </ion-label>
+            <ion-item class="ion-margin-vertical" lines="none" color="light">
+              <ion-input type="text" formControlName="phone" (keyup.enter)="myForm.ngSubmit.emit()"></ion-input>
+            </ion-item>
+
+            <div class="ion-text-center">
+              <ion-button type="submit" strong shape="round" color="primary" [disabled]="isSaving">
+                <ion-spinner color="light" *ngIf="isSaving"></ion-spinner>
+                <span *ngIf="!isSaving">{{ 'ADD_PLACE' | translate }}</span>
+              </ion-button>
+            </div>
+
+          </form>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

@@ -1,0 +1,77 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" fixed>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ post?.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="btn-share" (click)="onShare()" [disabled]="!post">
+        <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #container scrollEvents="true">
+
+  <empty-view *ngIf="isEmptyViewVisible" icon="alert-circle-outline" [text]="'EMPTY_DATA' | translate">
+  </empty-view>
+
+  <empty-view *ngIf="isErrorViewVisible" icon="alert-circle-outline" [text]="'ERROR_NETWORK' | translate">
+  </empty-view>
+
+  <web-social-share
+    (closed)="webSocialShare.onClosed()" [show]="webSocialShare.show" [share]="webSocialShare.share">
+    <ion-icon class="block" name="logo-facebook" slot="facebook" style="color:var(--ion-color-fb);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="logo-twitter" slot="twitter" style="color:var(--ion-color-twitter);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="logo-whatsapp" slot="whatsapp" style="color:var(--ion-color-whatsapp);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="copy-outline" slot="copy" style="color: var(--ion-color-medium);width:36px;height:36px;">
+    </ion-icon>
+  </web-social-share>
+
+  <ion-grid fixed>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size-xs="12" size-lg="8">
+
+        <div *ngIf="isLoadingViewVisible">
+          <ngx-skeleton-loader count="1" appearance="circle"
+            [theme]="{ 'border-radius': '0', margin: '0 0 16px', height: '250px', width: '100%' }">
+          </ngx-skeleton-loader>
+          <ngx-skeleton-loader count="16"
+            [theme]="{ 'border-radius': '0', height: '10px' }">
+          </ngx-skeleton-loader>
+        </div>
+
+        <div class="fade-in" *ngIf="isContentViewVisible">
+          <div class="bg-img" defaultImage="./assets/img/placeholder.png"
+            [lazyLoad]="post?.image?.url()"
+            [customObservable]="loadAndScroll">
+          </div>
+
+          <div class="margin-top ion-padding">
+            <h3 class="bold">{{ post?.title }}</h3>
+            <ion-text color="medium">
+              <p class="bold">{{ post?.body }}</p>
+            </ion-text>
+
+            <ion-button *ngIf="post.place" color="secondary"
+              [routerLink]="['/1/posts/places/' + post.place.id]">
+            {{ 'VIEW_PLACE' | translate }}
+            </ion-button>
+           
+            <div class="html-content" *ngIf="htmlBody"
+              (click)="onContentTouched($event)"
+              [innerHTML]="htmlBody">
+            </div>
+          </div>
+        </div>
+
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
+</ion-content>

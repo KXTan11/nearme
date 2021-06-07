@@ -1,0 +1,28 @@
+{
+  "name": "parse",
+  "version": "2.4.0",
+  "main": [
+    "parse.js"
+  ],
+  "keywords": [
+    "parse",
+    "parse.com",
+    "api",
+    "js"
+  ],
+  "ignore": [
+    "update.sh",
+    "Parse-SDK-JS",
+    "README.md"
+  ],
+  "homepage": "https://github.com/rabidaudio/bower-parse",
+  "_release": "2.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.4.0",
+    "commit": "cdb8a23ff92ca60b297b7cf71574f881dc485b28"
+  },
+  "_source": "https://github.com/rabidaudio/bower-parse.git",
+  "_target": "^2.4.0",
+  "_originalSource": "parse"
+}

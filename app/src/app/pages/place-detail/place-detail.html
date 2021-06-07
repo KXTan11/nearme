@@ -1,0 +1,339 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" fixed>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ place?.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onLike()" [disabled]="!place">
+        <ion-icon slot="icon-only" [name]="isLiked ? 'heart' : 'heart-outline'"></ion-icon>
+      </ion-button>
+      <ion-button class="btn-share" (click)="onShare()" [disabled]="!place">
+        <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #container scrollEvents="true">
+
+  <empty-view *ngIf="isEmptyViewVisible" icon="alert-circle-outline" [text]="'EMPTY_DATA' | translate">
+  </empty-view>
+
+  <empty-view *ngIf="isErrorViewVisible" icon="alert-circle-outline" [text]="'ERROR_NETWORK' | translate">
+  </empty-view>
+
+  <ng-template #itemGalleryTemplate let-data="data">
+    <ng-container>
+      <ion-slides style="width: 100%; height: 100%;" [options]="sliderGalleryOpts">
+        <ion-slide>
+          <div class="swiper-zoom-container">
+            <img style="width: 100%; height: 100%; object-fit: contain;" [src]="data.src">
+          </div>
+        </ion-slide>
+      </ion-slides>
+    </ng-container>
+  </ng-template>
+
+  <web-social-share (closed)="webSocialShare.onClosed()" [show]="webSocialShare.show" [share]="webSocialShare.share">
+    <ion-icon class="block" name="logo-facebook" slot="facebook"
+      style="color:var(--ion-color-fb);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="logo-twitter" slot="twitter"
+      style="color:var(--ion-color-twitter);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="logo-whatsapp" slot="whatsapp"
+      style="color:var(--ion-color-whatsapp);width:36px;height:36px;">
+    </ion-icon>
+    <ion-icon class="block" name="copy-outline" slot="copy"
+      style="color: var(--ion-color-medium);width:36px;height:36px;">
+    </ion-icon>
+  </web-social-share>
+
+  <ion-grid fixed>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size-xs="12" size-lg="10">
+
+        <section class="light-bg radius ion-padding" *ngIf="isLoadingViewVisible">
+          <ion-row class="ion-nowrap">
+            <ion-col size-xs="6" size-sm="6" size-md="6" size-lg="2" *ngFor="let item of skeletonImages">
+              <ngx-skeleton-loader count="1" appearance="circle"
+                [theme]="{ width: '150px', height: '150px', 'border-radius': '4px' }">
+              </ngx-skeleton-loader>
+            </ion-col>
+          </ion-row>
+
+          <div class="skeleton-item">
+            <div class="wrapper">
+              <div class="avatar">
+                <ngx-skeleton-loader appearance="circle" [theme]="{ width: '80px', height: '80px' }">
+                </ngx-skeleton-loader>
+              </div>
+              <div class="title">
+                <div>
+                  <ngx-skeleton-loader
+                    [theme]="{ width: '30%', 'border-radius': '0', height: '15px', 'margin-bottom': '10px'}">
+                  </ngx-skeleton-loader>
+                </div>
+                <div>
+                  <ngx-skeleton-loader [theme]="{ width: '70%', 'border-radius': '0', height: '15px' }">
+                  </ngx-skeleton-loader>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ion-row>
+            <ion-col size="4" class="ion-text-center">
+              <div>
+                <ngx-skeleton-loader appearance="circle" [theme]="{ width: '100px', height: '100px' }">
+                </ngx-skeleton-loader>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-text-center">
+              <div>
+                <ngx-skeleton-loader appearance="circle" [theme]="{ width: '100px', height: '100px' }">
+                </ngx-skeleton-loader>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-text-center">
+              <div>
+                <ngx-skeleton-loader appearance="circle" [theme]="{ width: '100px', height: '100px' }">
+                </ngx-skeleton-loader>
+              </div>
+            </ion-col>
+          </ion-row>
+
+        </section>
+
+        <section *ngIf="isLoadingViewVisible">
+          <div class="skeleton-item light-bg radius" *ngFor="let item of skeletonReviews">
+            <div class="wrapper">
+              <div class="avatar">
+                <ngx-skeleton-loader appearance="circle" [theme]="{ width: '80px', height: '80px' }">
+                </ngx-skeleton-loader>
+              </div>
+              <div class="title">
+                <div>
+                  <ngx-skeleton-loader
+                    [theme]="{ width: '30%', 'border-radius': '0', height: '15px', 'margin-bottom': '10px'}">
+                  </ngx-skeleton-loader>
+                </div>
+                <div>
+                  <ngx-skeleton-loader [theme]="{ width: '70%', 'border-radius': '0', height: '15px' }">
+                  </ngx-skeleton-loader>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section *ngIf="isContentViewVisible">
+
+          <ion-row>
+            <ion-col size="12">
+              <div class="light-bg radius ion-padding-vertical fade-in">
+                <ion-slides pager="false" gallerize="placeGallery" selector=".bg-img"
+                  (ionSlidesDidLoad)="onSlidesDidLoad()" (ionSlideDrag)="onSlidesDrag()"
+                  [options]="slidesConfig">
+                  <ion-slide *ngFor="let image of images">
+                    <div class="bg-img radius" defaultImage="./assets/img/placeholder.png" [attr.imageSrc]="image.url()"
+                      [attr.thumbSrc]="image.url()" [lazyLoad]="image.url()" [customObservable]="loadAndScroll">
+                    </div>
+                  </ion-slide>
+                </ion-slides>
+
+                <div class="ion-padding">
+                  <ion-item class="ion-margin-vertical" lines="none" color="light">
+                    <ion-thumbnail class="img-featured" slot="start" *ngIf="place?.imageThumb">
+                      <img [alt]="place.title" defaultImage="./assets/img/placeholder.png" [lazyLoad]="place?.imageThumb?.url()"
+                        [customObservable]="loadAndScroll" />
+                    </ion-thumbnail>
+                    <ion-label class="ion-text-nowrap">
+                      <ion-text color="dark">
+                        <h2 class="bold ellipsis">
+                          {{ place?.title }}
+                        </h2>
+                      </ion-text>
+                      <div class="ion-text-nowrap">
+                        <ion-text color="medium">
+                          <p>
+                            <span class="text-medium bold ion-margin-top">
+                              {{ place.categories.join(' &bull; ') }}
+                            </span>
+
+                            <span class="text-medium bold" [class.hidden]="!location && !preference.unit">
+                              - {{ place?.distance(location, preference.unit) }}
+                            </span>
+                          </p>
+                        </ion-text>
+                      </div>
+
+                      <div>
+                        <bar-rating *ngIf="place.ratingAvg" [rate]="place.ratingAvg" class="rating" [readOnly]="true" [max]="5" [theme]="'stars'">
+                        </bar-rating>
+                      </div>
+
+                    </ion-label>
+                  </ion-item>
+                  <div class="ion-text-wrap ion-margin-top">
+                    <ion-text color="medium">
+                      <p class="text-medium bold">{{ place?.description }}</p>
+                    </ion-text>
+                  </div>
+                </div>
+
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <div class="html-content" *ngIf="description" (click)="onContentTouched($event)" [innerHTML]="description">
+          </div>
+
+        </section>
+
+        <section class="ion-margin-top" *ngIf="isContentViewVisible">
+
+          <ion-row>
+            <ion-col size-xs="12" size-lg="7" *ngIf="isReviewsEnabled">
+              <div class="light-bg radius ion-padding">
+                <ion-row class="ion-align-items-center">
+                  <ion-col size-xs="6" size-md="8" size-lg="8">
+                    <h5 no-margin>
+                      <ion-icon class="text-medium" name="chatbubbles"></ion-icon>
+                      {{ 'REVIEWS' | translate }}
+                    </h5>
+                  </ion-col>
+                  <ion-col size-xs="6" size-md="4" size-lg="4" text-end>
+                    <ion-button class="bold" size="small" expand="block" shape="round" color="secondary"
+                      (click)="onRate()">
+                      {{ 'POST_REVIEW' | translate }}
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+
+                <div *ngIf="!reviews.length" style="height:170px;" class="ion-text-center">
+                  <div class="flex-center">
+                    <ion-text color="medium">
+                      <p class="text-medium">
+                        {{ 'EMPTY_REVIEWS' | translate }}
+                      </p>
+                    </ion-text>
+                  </div>
+
+                </div>
+
+                <ion-list class="ion-no-margin">
+                  <div class="radius light-bg" *ngFor="let review of reviews">
+                    <ion-item color="light">
+                      <ion-avatar slot="start">
+                        <img [alt]="review.user?.name" defaultImage="./assets/img/avatar.png" [lazyLoad]="review.user?.photo?.url()"
+                          [customObservable]="loadAndScroll" />
+                      </ion-avatar>
+
+                      <ion-label class="ion-text-wrap">
+                        <ion-text color="medium" class="ion-float-end">
+                          <span class="text-small">
+                            {{ review.createdAt | date:'mediumDate' }}
+                          </span>
+                        </ion-text>
+                        <ion-text color="dark">
+                          <h3 class="bold no-margin">{{ review.user?.name }}</h3>
+                        </ion-text>
+                        <bar-rating class="rating" [rate]="review.rating" [readOnly]="true" [max]="5" [theme]="'stars'">
+                        </bar-rating>
+                        <ion-text color="dark">
+                          <p class="text-medium no-margin">{{ review.comment }}</p>
+                        </ion-text>
+                      </ion-label>
+
+                    </ion-item>
+                  </div>
+                </ion-list>
+                <div class="ion-text-center" *ngIf="reviews.length">
+                  <ion-button class="bold" fill="clear" color="dark" [routerLink]="['./reviews']">
+                    {{ 'VIEW_ALL_REVIEWS' | translate }}
+                    <ion-icon slot="end" name="chevron-forward"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size-xs="12" size-lg="5">
+              <div class="light-bg radius ion-padding">
+                <img
+                  src="https://maps.googleapis.com/maps/api/staticmap?key={{apiKey}}&markers=color:0xff7676%7C{{place?.location.latitude}},{{place?.location.longitude}}&zoom=17&format=png&size=600x300&zoom=17" />
+
+                <ion-list class="ion-no-margin" color="light">
+                  <ion-item color="light" *ngIf="place?.address">
+                    <ion-icon slot="start" name="map"></ion-icon>
+                    <ion-label class="ion-text-wrap">
+                      <span class="text-medium">{{ place?.address }}</span>
+                      <ion-label color="primary">
+                        <span class="text-medium link" (click)="onDirectionsButtonTouched()">
+                          {{ 'GET_DIRECTIONS' | translate }}
+                        </span>
+                      </ion-label>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item color="light" *ngIf="place?.website" (click)="openUrl(place.website)">
+                    <ion-icon slot="start" name="globe"></ion-icon>
+                    <ion-label>
+                      <ion-text color="primary">
+                        <span class="text-medium link">{{ place?.website }}</span>
+                      </ion-text>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item color="light" *ngIf="place?.phone" (click)="onCall()">
+                    <ion-icon slot="start" name="call"></ion-icon>
+                    <ion-label>
+                      <ion-text color="primary">
+                        <span class="text-medium link">{{ place?.phone }}</span>
+                      </ion-text>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item color="light" *ngIf="place?.facebook" (click)="openUrl(place.facebook)">
+                    <ion-icon slot="start" name="logo-facebook"></ion-icon>
+                    <ion-label>
+                      <ion-text color="primary">
+                        <span class="text-medium link">{{ place?.facebook }}</span>
+                      </ion-text>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item color="light" *ngIf="place?.instagram" (click)="openUrl(place.instagram)">
+                    <ion-icon slot="start" name="logo-instagram"></ion-icon>
+                    <ion-label>
+                      <ion-text color="primary">
+                        <span class="text-medium link">{{ place?.instagram }}</span>
+                      </ion-text>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item color="light" *ngIf="place?.youtube" (click)="openUrl(place.youtube)">
+                    <ion-icon slot="start" name="logo-youtube"></ion-icon>
+                    <ion-label>
+                      <ion-text color="primary">
+                        <span class="text-medium link">{{ place?.youtube }}</span>
+                      </ion-text>
+                    </ion-label>
+                  </ion-item>
+                </ion-list>
+
+                <div class="ion-text-center">
+                  <ion-button strong fill="clear" color="dark" (click)="onReportButtonTouched()">
+                    <span class="ion-text-capitalize">
+                      {{ 'REPORT_LISTING' | translate }}
+                    </span>
+                  </ion-button>
+                </div>
+
+              </div>
+            </ion-col>
+          </ion-row>
+
+        </section>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

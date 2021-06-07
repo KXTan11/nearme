@@ -1,0 +1,39 @@
+<ion-content>
+
+  <div class="ion-text-center header">
+    <p class="bold text-large">
+      <ion-text class="medium">
+        {{ userPackage?.package?.name }}
+      </ion-text>
+    </p>
+    <p class="bold text-xlarge ion-no-margin">
+      <ion-text>
+        {{ userPackage?.package?.finalPrice | currencyGlobal }}
+      </ion-text>
+    </p>
+  </div>
+
+  <div class="ion-padding">
+
+    <div style="margin-top: 30px;">
+      <ngx-stripe-card [options]="cardOptions" [elementsOptions]="elementsOptions">
+      </ngx-stripe-card>
+    </div>
+
+    <ion-row class="ion-justify-content-center" style="margin-top: 20px;">
+      <ion-col size-xs="10" size-md="8">
+        <ion-button class="ion-margin-vertical" strong size="large" shape="round" color="primary" expand="block"
+          (click)="onSubmit()" [disabled]="isSaving">
+          <ion-spinner *ngIf="isSaving" name="dots"></ion-spinner>
+          <span *ngIf="!isSaving">{{ 'PAY_NOW' | translate }}</span>
+        </ion-button>
+
+        <ion-button class="ion-margin-top" strong size="large" expand="block" fill="clear" color="dark"
+          (click)="onDismiss()">
+          {{ 'CANCEL' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+
+</ion-content>

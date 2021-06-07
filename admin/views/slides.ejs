@@ -1,0 +1,59 @@
+<md-content class="main-content" ng-controller="SlideIntroCtrl">
+
+  <md-table-toolbar>
+    <div layout="row" layout-align="center center" class="padding">
+      <span flex></span>
+      <md-button class="md-primary md-raised" md-colors="::{ color: 'white' }" aria-label="New"
+        ng-click="onEdit($event)" translate="CREATE" translate-cloak="CREATE">
+      </md-button>
+    </div>
+  </md-table-toolbar>
+
+  <md-table-container>
+    <table md-table md-progress="promise">
+      <thead md-head md-on-reorder="onReorder">
+        <tr md-row>
+          <th md-column class="text-center"></th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="SORT" translate-cloak="SORT"></span>
+          </th>
+          <th md-column class="text-center text-uppercase bold">
+            <span translate="STATUS" translate-cloak="STATUS"></span>
+          </th>
+          <th md-column></th>
+        </tr>
+      </thead>
+      <tbody md-body>
+        <tr md-row ng-repeat="slide in slides">
+          <td md-cell class="text-center">
+            <img width="80" ng-src="/images/placeholder.png" actual-src="{{:: slide.image.url() }}" />
+          </td>
+          <td md-cell class="text-center">{{:: slide.sort }}</td>
+          <td md-cell class="text-center">
+            <span class="label" ng-class="::{ 'green': slide.isActive,
+            'yellow': !slide.isActive }">
+            <span ng-if="slide.isActive" translate="ACTIVE" translate-cloak="ACTIVE"></span>
+            <span ng-if="!slide.isActive" translate="INACTIVE" translate-cloak="INACTIVE"></span>
+            </span>
+          </td>
+          <td md-cell>
+            <section layout="row" layout-align="center center">
+              <md-button class="md-icon-button md-primary" ng-click="onEdit($event, slide)" aria-label="Edit">
+                <ng-md-icon icon="mode_edit"></ng-md-icon>
+              </md-button>
+              <md-button class="md-icon-button md-primary" ng-click="onDelete($event, slide)" aria-label="Delete">
+                <ng-md-icon icon="clear"></ng-md-icon>
+              </md-button>
+            </section>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+
+  <md-table-pagination md-limit-options="rowOptions" md-limit="query.limit" md-page="query.page"
+    md-total="{{query.total}}" md-on-paginate="onPaginationChange"
+    md-label="{ rowsPerPage: '{{ 'ROWS_PER_PAGE' | translate }}', of: '{{ 'OF' | translate }}' }">
+  </md-table-pagination>
+
+</md-content>

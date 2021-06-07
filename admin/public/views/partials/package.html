@@ -1,0 +1,128 @@
+<md-dialog flex="100" flex-gt-xs="50" aria-label="Package Category">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2 ng-show="obj.isNew()">{{ 'NEW' | translate }}</h2>
+      <h2 ng-show="!obj.isNew()">{{ 'EDIT' | translate }} {{::obj.title }}</h2>
+      <span flex></span>
+      <ng-md-icon icon="close" class="icon-close" ng-click="onClose()" aria-label="Close dialog">
+      </ng-md-icon>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content>
+    <div class="md-dialog-content">
+
+      <form name="form" role="form" novalidate>
+
+        <div class="no-padding" layout="row" layout-xs="column" layout-sm="column" layout-padding>
+
+          <div flex-gt-sm="50" layout="column">
+
+            <md-input-container class="md-block">
+              <label>{{ 'TYPE' | translate }}</label>
+              <md-select name="type" required placeholder ng-model="obj.type" ng-change="onChangeType()">
+                <md-option value="paid_listing">{{ 'PAID_LISTING' | translate }}</md-option>
+                <md-option value="promote_listing">{{ 'PROMOTE_LISTING' | translate }}</md-option>
+              </md-select>
+              <div ng-messages="form.type.$error">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>{{ 'PACKAGE_NAME' | translate }}</label>
+              <input required name="title" ng-model="obj.name" placeholder>
+              <div ng-messages="form.title.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>{{ 'DESCRIPTION' | translate }}</label>
+              <textarea name="description" ng-model="obj.description" rows="2" placeholder>
+              </textarea>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>{{ 'SORT' | translate }}</label>
+              <input type="number" name="sort" min="0" ng-model="obj.sort" required placeholder>
+              <div ng-messages="form.sort.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <div layout="row">
+              <md-input-container class="md-block" flex>
+                <label>{{ 'PRICE' | translate }}</label>
+                <input required placeholder name="price" type="number" min="0" ng-model="obj.price">
+                <div ng-messages="form.price.$error">
+                  <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+              <md-input-container class="md-block" flex>
+                <label>{{ 'SALE_PRICE' | translate }}</label>
+                <input placeholder name="salePrice" type="number" min="0" ng-max="obj.price" ng-model="obj.salePrice">
+              </md-input-container>
+            </div>
+
+            <md-input-container class="md-block">
+              <label>{{ 'STATUS' | translate }}</label>
+              <md-select name="status" required placeholder ng-model="obj.status">
+                <md-option value="Active">{{ 'ACTIVE' | translate }}</md-option>
+                <md-option value="Inactive">{{ 'INACTIVE' | translate }}</md-option>
+              </md-select>
+              <div ng-messages="form.status.$error">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+          </div>
+
+          <div flex-gt-sm="50" layout="column">
+
+            <md-input-container class="md-block">
+              <label>{{ 'LISTING_DURATION' | translate }}</label>
+              <input type="number" name="listingDuration" min="0" ng-model="obj.listingDuration" placeholder>
+              <div ng-messages="form.listingDuration.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>{{ 'LISTING_LIMIT' | translate }}</label>
+              <input type="number" name="listingLimit" min="0" ng-model="obj.listingLimit" ng-disabled="obj.type === 'promote_listing'" placeholder>
+              <div ng-messages="form.listingLimit.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+
+            <md-checkbox ng-model="obj.markListingAsFeatured" aria-label="Feature listing" ng-disabled="obj.type === 'promote_listing'">
+              {{ 'FEATURE_LISTING' | translate }}
+            </md-checkbox>
+
+            <md-checkbox ng-model="obj.autoApproveListing" aria-label="Auto approve listing" ng-disabled="obj.type === 'promote_listing'">
+              {{ 'AUTO_APPROVE_LISTING' | translate }}
+            </md-checkbox>
+
+            <md-checkbox ng-model="obj.disableMultiplePurchases" aria-label="Disable multiple purchases" ng-disabled="obj.type === 'promote_listing'">
+              {{ 'DISABLE_MULTIPLE_PURCHASES' | translate }}
+            </md-checkbox>
+
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row">
+    <md-button ng-click="onClose()">
+      {{ 'CLOSE' | translate }}
+    </md-button>
+    <span flex></span>
+    <md-button class="md-raised md-primary" ng-disabled="!form.$valid || isSaving" ng-click="onSubmit(form.$valid)">
+      {{ !isSaving ? ('SAVE' | translate) : ('SAVING' | translate) }}
+    </md-button>
+  </md-dialog-actions>
+
+</md-dialog>

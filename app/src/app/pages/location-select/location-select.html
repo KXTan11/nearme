@@ -1,0 +1,32 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="onDismiss()">
+        <ion-icon slot="start" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-searchbar color="light" mode="ios" debounce="500" [placeholder]="'ENTER_ADDRESS' | translate"
+      (ionCancel)="onClear()" (ionClear)="onClear()" (ionChange)="onSearchAddress($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <empty-view *ngIf="isEmptyViewVisible" icon="search" text="">
+  </empty-view>
+
+  <div [@staggerIn]="places.length">
+    <ion-item *ngFor="let place of places" (click)="onPlaceTouched(place)">
+      <ion-icon slot="start" name="location" color="medium"></ion-icon>
+      <ion-label>
+        <ion-text color="dark">
+          <span class="link bold text-medium">
+            {{ place.description }}
+          </span>
+        </ion-text>
+      </ion-label>
+    </ion-item>
+  </div>
+
+</ion-content>

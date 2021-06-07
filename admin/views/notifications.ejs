@@ -1,0 +1,188 @@
+<md-content class="main-content" ng-controller="NotificationCtrl">
+  <div layout="row" layout-xs="column" layout-sm="column" layout-padding>
+    <div flex>
+
+      <form name="form" novalidate>
+
+        <md-radio-group ng-change="onChangeType()" ng-model="notification.type">
+          <md-radio-button class="inline-block margin-right" value="Geo">
+            <span translate="GEO" translate-cloak="GEO"></span>
+          </md-radio-button>
+          <md-radio-button class="inline-block margin-right" value="All">
+            <span translate="ALL" translate-cloak="ALL"></span>
+          </md-radio-button>
+        </md-radio-group>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label translate="ADDRESS" translate-cloak="ADDRESS"></label>
+            <input type="text" name="address" placeholder g-places-autocomplete options="autocompleteOptions"
+              force-selection="true" ng-model="place" ng-disabled="notification.type === 'All'">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label translate="LATITUDE" translate-cloak="LATITUDE"></label>
+            <input type="number" name="latitude" placeholder ng-change="onInputLocationChanged()"
+              ng-required="notification.type === 'Geo'" ng-disabled="notification.type === 'All'"
+              ng-model-options="{debounce:600}" ng-model="notification.latitude">
+          </md-input-container>
+          <md-input-container flex>
+            <label translate="LONGITUDE" translate-cloak="LONGITUDE"></label>
+            <input type="number" name="longitude" placeholder ng-change="onInputLocationChanged()"
+              ng-required="notification.type === 'Geo'" ng-disabled="notification.type === 'All'"
+              ng-model-options="{debounce:600}" ng-model="notification.longitude">
+          </md-input-container>
+          <md-input-container flex>
+            <label translate="DISTANCE" translate-cloak="DISTANCE"></label>
+            <input type="number" min="0" placeholder ng-required="notification.type === 'Geo'"
+              ng-disabled="notification.type === 'All'" ng-model="notification.radius" />
+          </md-input-container>
+        </div>
+
+        <div class="margin-vertical">
+          <ng-map class="map map-page-notifications" zoom="2" center="[0,0]" scrollwheel="false"
+            street-view-control="false" map-type-control="false">
+            <shape id="circle" name="circle" ng-show="canShowCircle()" on-center_changed="onShapeCenterChanged()"
+              on-radius_changed="onShapeRadiusChanged()" on-dragend="onShapeDragEnd()" stroke-color="#FF0000"
+              stroke-opacity="0.8" stroke-weight="2" fill-color="#FF0000" fill-opacity="0.35" draggable="true"
+              editable="true" centered="true" center="{{coords}}" radius="{{notification.radius * 1000}}">
+          </ng-map>
+        </div>
+
+        <br />
+
+        <div layout="row">
+          <md-input-container flex>
+            <label translate="MESSAGE" translate-cloak="MESSAGE"></label>
+            <textarea required placeholder ng-model="notification.message" md-maxlength="150" rows="3"></textarea>
+            <div ng-messages="form.message.$error">
+              <div ng-message="required" translate="FIELD_REQUIRED" translate-cloak="FIELD_REQUIRED"></div>
+            </div>
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container class="md-block">
+            <label translate="LINK_TO" translate-cloak="LINK_TO"></label>
+            <md-select name="attachmentType" ng-change="onAttachmentTypeChanged()"
+              ng-model="notification.attachmentType">
+              <md-option ng-value="null" translate="NO_LINK" translate-cloak="NO_LINK"></md-option>
+              <md-option value="place" translate="PLACE" translate-cloak="PLACE"></md-option>
+              <md-option value="post" translate="POST" translate-cloak="POST"></md-option>
+              <md-option value="category" translate="CATEGORY" translate-cloak="CATEGORY"></md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+
+        <div layout="row" ng-if="notification.attachmentType === 'place'">
+          <md-input-container class="md-block" flex flex-gt-xs="50">
+            <label translate="PLACE" translate-cloak="PLACE"></label>
+            <md-autocomplete flex md-no-float md-clear-button="false" md-input-name="place" md-no-cache="true"
+              md-selected-item="notification.place" md-search-text="searchPlaceText"
+              md-items="place in queryPlaces(searchPlaceText)" md-item-text="place.title" md-require-match>
+              <md-item-template>
+                <span md-highlight-text="searchPlaceText">
+                  {{ place.title }}
+                </span>
+              </md-item-template>
+              <md-not-found translate="NO_RESULTS_FOUND" translate-cloak="NO_RESULTS_FOUND">
+              </md-not-found>
+            </md-autocomplete>
+          </md-input-container>
+        </div>
+
+        <div layout="row" ng-if="notification.attachmentType === 'post'">
+          <md-input-container class="md-block" flex flex-gt-xs="50">
+            <label translate="POST" translate-cloak="POST"></label>
+            <md-autocomplete flex md-no-float md-clear-button="false" md-input-name="post" md-no-cache="true"
+              md-selected-item="notification.post" md-search-text="searchPostText"
+              md-items="post in queryPosts(searchPostText)" md-item-text="post.title" md-require-match>
+              <md-item-template>
+                <span md-highlight-text="searchPostText">{{ post.title }}</span>
+              </md-item-template>
+              <md-not-found translate="NO_RESULTS_FOUND" translate-cloak="NO_RESULTS_FOUND">
+              </md-not-found>
+            </md-autocomplete>
+          </md-input-container>
+        </div>
+
+        <div layout="row" ng-if="notification.attachmentType === 'category'">
+          <md-input-container class="md-block" flex flex-gt-xs="50">
+            <label translate="CATEGORY" translate-cloak="CATEGORY"></label>
+            <md-autocomplete flex md-no-float md-clear-button="false" md-input-name="category" md-no-cache="true"
+              md-selected-item="notification.category" md-search-text="searchCategoryText"
+              md-items="category in queryCategories(searchCategoryText)" md-item-text="category.title" md-require-match>
+              <md-item-template>
+                <span md-highlight-text="searchCategoryText">{{ category.title }}</span>
+              </md-item-template>
+              <md-not-found translate="NO_RESULTS_FOUND" translate-cloak="NO_RESULTS_FOUND">
+              </md-not-found>
+            </md-autocomplete>
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container class="md-block" md-no-float flex>
+            <md-chips class="full-width" name="customers" ng-model="notification.users" md-autocomplete-snap="width"
+              md-require-match="true" input-aria-label="Customers">
+              <md-autocomplete class="full-width" md-no-cache="true" md-search-text="searchText"
+                md-items="user in queryUsers(searchText)" md-item-text="user.name"
+                placeholder="{{ 'CUSTOMERS' | translate }}">
+                <md-item-template>
+                  <span md-highlight-text="searchText">
+                    {{ user.name }}
+                  </span>
+                  <span ng-if="user.authData.facebook">(Facebook)</span>
+                  <span ng-if="user.authData.google">(Google)</span>
+                  <span ng-if="user.authData.apple">(Apple)</span>
+                  <span ng-if="!user.authData">({{ user.username }})</span>
+                </md-item-template>
+              </md-autocomplete>
+              <md-chip-template>
+                <span>
+                  <strong>{{ $chip.name }}</strong>
+                </span>
+                <span ng-if="$chip.authData.facebook">(Facebook)</span>
+                <span ng-if="$chip.authData.google">(Google)</span>
+                <span ng-if="$chip.authData.apple">(Apple)</span>
+                <span ng-if="!$chip.authData">({{ $chip.username }})</span>
+              </md-chip-template>
+            </md-chips>
+          </md-input-container>
+        </div>
+
+        <div layout="row" layout-align="end center">
+          <md-button class="md-raised md-primary" ng-disabled="!form.$valid" ng-click="onSubmit(form.$valid)">
+            <span ng-if="!isSending" translate="SEND" translate-cloak="SEND"></span>
+            <span ng-if="isSending" translate="SENDING" translate-cloak="SENDING"></span>
+          </md-button>
+        </div>
+
+      </form>
+
+    </div>
+    <div flex>
+      <md-list class="scrollable" flex>
+        <md-subheader class="md-sticky" translate="LATEST_NOTIFICATIONS" translate-cloak="LATEST_NOTIFICATIONS">
+        </md-subheader>
+        <md-list-item class="md-3-line" ng-repeat="notification in notifications track by notification.id">
+          <div class="md-list-item-text" layout="column">
+            <h3>&nbsp;{{ notification.message }}</h3>
+            <h4>&nbsp;{{ notification.createdAt | date:'mediumDate' }}</h4>
+            <div ng-if="notification.address" style="display: flex; align-items: center;">
+              <ng-md-icon icon="location_on" size="14"></ng-md-icon>
+              <p class="text-small">{{ notification.address }}</p>
+            </div>
+            <md-button class="md-secondary" aria-label="Delete" ng-click="onDeleteNotification(notification)">
+              <span translate="DELETE" translate-cloak="DELETE"></span>
+            </md-button>
+          </div>
+          <md-divider></md-divider>
+        </md-list-item>
+      </md-list>
+    </div>
+    </section>
+
+</md-content>

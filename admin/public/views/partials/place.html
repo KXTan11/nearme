@@ -1,0 +1,246 @@
+<md-dialog flex="100" flex-gt-xs="80" flex-gt-sm="60" aria-label="Place Dialog">
+  <form name="form" role="form" novalidate>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 ng-show="obj.isNew()">{{ 'NEW' | translate }}</h2>
+        <h2 ng-show="!obj.isNew()">{{ 'EDIT' | translate }} {{::obj.title }}</h2>
+        <span flex></span>
+        <ng-md-icon icon="close" class="icon-close" ng-click="onClose()" aria-label="Close dialog"></ng-md-icon>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="{{ 'GENERAL' | translate }}">
+
+          <div layout="row" layout-xs="column" layout-sm="column" layout-padding>
+            <div flex-gt-sm="50" layout="column">
+
+              <md-input-container class="md-block">
+                <label>{{ 'SEARCH_PLACE_IN_GOOGLE_PLACES' | translate }}</label>
+                <input type="text" placeholder g-places-autocomplete options="autocompleteOptions"
+                  force-selection="true" ng-model="placeFromGooglePlaces" />
+              </md-input-container>
+
+              <div layout="row">
+                <md-chips name="categories" ng-model="categories" md-autocomplete-snap md-require-match="true"
+                  input-aria-label="{{ 'CATEGORY' | translate }}" flex>
+                  <md-autocomplete md-no-cache="true" md-search-text="searchCategory"
+                    md-items="category in queryCategories(searchCategory)" md-item-text="category.title"
+                    placeholder="{{ 'CATEGORY' | translate }}">
+                    <span md-highlight-text="searchCategory">{{ category.title }}</span>
+                  </md-autocomplete>
+                  <md-chip-template>
+                    <span>
+                      <strong>{{ $chip.title }}</strong>
+                    </span>
+                  </md-chip-template>
+                </md-chips>
+              </div>
+
+              <md-input-container class="md-block">
+                <label>{{ 'TITLE' | translate }}</label>
+                <input type="text" required name="title" placeholder ng-model="obj.title">
+                <div ng-messages="form.title.$error" ng-show="form.$submitted">
+                  <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'SHORT_DESCRIPTION' | translate }}</label>
+                <textarea name="description" ng-model="obj.description" rows="2" placeholder>
+                </textarea>
+                <div ng-messages="form.description.$error" ng-show="form.$submitted">
+                  <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'PHONE' | translate }}</label>
+                <input type="text" name="phone" ng-model="obj.phone" placeholder>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'WEBSITE' | translate }}</label>
+                <input type="url" name="website" ng-model="obj.website" placeholder>
+                <div ng-messages="form.website.$error" ng-show="form.$submitted">
+                  <div ng-message="url">{{ 'INVALID_URL' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'FACEBOOK' | translate }}</label>
+                <input type="url" name="facebook" ng-model="obj.facebook" placeholder>
+                <div ng-messages="form.facebook.$error" ng-show="form.$submitted">
+                  <div ng-message="url">{{ 'INVALID_URL' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'INSTAGRAM' | translate }}</label>
+                <input type="url" name="instagram" ng-model="obj.instagram" placeholder>
+                <div ng-messages="form.instagram.$error" ng-show="form.$submitted">
+                  <div ng-message="url">{{ 'INVALID_URL' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block">
+                <label>{{ 'YOUTUBE' | translate }}</label>
+                <input type="url" name="youtube" ng-model="obj.youtube" placeholder>
+                <div ng-messages="form.youtube.$error" ng-show="form.$submitted">
+                  <div ng-message="url">{{ 'INVALID_URL' | translate }}</div>
+                </div>
+              </md-input-container>
+
+            </div>
+
+            <div flex-gt-sm="50" layout="column">
+
+              <md-input-container flex>
+                <label>{{ 'STATUS' | translate }}</label>
+                <md-select name="status" required placeholder ng-model="obj.status">
+                  <md-option value="Pending">{{ 'PENDING' | translate }}</md-option>
+                  <md-option value="Approved">{{ 'APPROVED' | translate }}</md-option>
+                  <md-option value="Rejected">{{ 'REJECTED' | translate }}</md-option>
+                  <md-option value="Expired">{{ 'EXPIRED' | translate }}</md-option>
+                </md-select>
+                <div ng-messages="form.status.$error">
+                  <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+
+              <md-chips class="full-width" ng-model="tags" name="tags" md-separator-keys="separatorKeys"
+                secondary-placeholder="{{ 'TAG_PLACEHOLDER' | translate }}" placeholder="{{ 'ENTER_TAG' | translate }}"
+                input-aria-label="{{ 'TAGS' | translate }}">
+                <md-chip-template>
+                  <strong>{{ $chip }}</strong>
+                </md-chip-template>
+              </md-chips>
+
+              <md-checkbox aria-label="Featured" ng-model="obj.isFeatured">
+                {{ 'FEATURED' | translate }}
+              </md-checkbox>
+
+              <md-input-container class="md-block">
+                <label>{{ 'ADDRESS' | translate }}</label>
+                <input type="text" name="address" ng-model="obj.address" placeholder
+                  ng-model-options="{ debounce: 2000 }" ng-change="onAddressChanged()">
+              </md-input-container>
+
+              <md-input-container>
+                <ng-map class="map" scrollwheel="false" map-type-control="false" street-view-control="false">
+                  <marker draggable="true" on-dragend="onMarkerDragEnd()"></marker>
+                </ng-map>
+              </md-input-container>
+
+              <div layout="row" layout-align="start center">
+                <md-input-container>
+                  <label>{{ 'LATITUDE' | translate }}</label>
+                  <input type="number" name="latitude" placeholder ng-change="onInputLocationChanged()"
+                    ng-model-options="{debounce:1000}" ng-model="input.latitude">
+                </md-input-container>
+
+                <md-input-container>
+                  <label>{{ 'LONGITUDE' | translate }}</label>
+                  <input type="number" name="longitude" placeholder ng-change="onInputLocationChanged()"
+                    ng-model-options="{debounce:1000}" ng-model="input.longitude">
+                </md-input-container>
+              </div>
+
+              <div layout="row" class="margin">
+                <div flex="100" class="box-picture img-box"
+                  ng-style="{ 'background-image': obj.image ? 'url(' + obj.image.url() + ')' : 'url(/images/placeholder.jpg)' }">
+                </div>
+              </div>
+
+              <div class="margin-vertical text-center">
+                <md-button class="md-raised md-primary" ng-disabled="isImageOneUploading" ngf-pattern="'image/*'"
+                  accept="image/*" ngf-select="uploadImageOne($file, $invalidFile)">
+                  {{ 'SET_FEATURED_IMAGE' | translate }}
+                </md-button>
+              </div>
+
+              <div layout="row" layout-align="start center">
+                <md-input-container md-no-float>
+                  <input type="text" value="{{ obj.icon.name() }}" disabled
+                    placeholder="{{ 'UPLOAD_ICON' | translate }}" />
+                </md-input-container>
+                <ng-md-icon icon="photo_camera" class="photo-camera"
+                  ng-class="{ 'icon-active': obj.icon.url() }"
+                  ngf-dimensions="$width === 64 && $height === 64"
+                  ngf-select="uploadIcon($file, $invalidFile)" ngf-max-size="1MB"
+                  ngf-pattern="'image/*'" accept="image/*">
+                  <md-tooltip>
+                    {{ 'CHOOSE_FILE' | translate }}
+                  </md-tooltip>
+                </ng-md-icon>
+                <md-progress-circular class="md-primary" md-diameter="30"
+                  ng-if="isUploadingIcon">
+                </md-progress-circular>
+  
+              </div>
+  
+              <div>
+                <p class="md-caption">{{ 'ICON_SIZE_HELP' | translate }}</p>
+              </div>  
+
+            </div>
+          </div>
+        </md-tab>
+
+        <md-tab label="{{ 'DESCRIPTION' | translate }}">
+          <div class="padding">
+            <md-input-container class="md-block">
+              <label>{{ 'DESCRIPTION' | translate }}</label>
+              <textarea name="longDescription" ng-model="obj.longDescription" rows="3" placeholder
+                ui-tinymce="tinymceOptions">
+                  </textarea>
+              <div ng-messages="form.longDescription.$error" ng-show="form.$submitted">
+                <div ng-message="required">{{ 'FIELD_REQUIRED' | translate }}</div>
+              </div>
+            </md-input-container>
+          </div>
+
+        </md-tab>
+
+        <md-tab label="{{ 'GALLERY' | translate }}">
+          <div class="padding">
+
+            <div class="margin-bottom">
+              <md-button class="md-raised" type="button" multiple ngf-select="onUploadImages($files)"
+                ngf-pattern="'image/*'">
+                {{ 'BROWSE' | translate }}
+              </md-button>
+            </div>
+
+            <div class="row gallery">
+              <div class="column text-center" ng-repeat="image in images track by $index">
+                <div class="bg-image" ng-style="{ 'background-image': 'url(' + image.file.url() + ')' }">
+                  <md-progress-circular class="md-primary" md-diameter="30" ng-show="image.isUploading">
+                  </md-progress-circular>
+                  <md-button ng-click="onDeleteImage(image)" *ngIf="image.file" class="md-icon-button md-primary"
+                    aria-label="Delete">
+                    <ng-md-icon icon="clear"></ng-md-icon>
+                  </md-button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </md-tab>
+
+      </md-tabs>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button ng-click="onClose()">
+        {{ 'CLOSE' | translate }}
+      </md-button>
+      <span flex></span>
+      <md-button type="submit" class="md-raised md-primary" ng-click="onSubmit()"
+        ng-disabled="!form.$valid || isSaving">
+        {{ !isSaving ? ('SAVE' | translate) : ('SAVING' | translate) }}
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

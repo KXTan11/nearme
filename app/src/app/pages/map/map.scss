@@ -1,0 +1,34 @@
+ion-content {
+  --overflow: hidden;
+}
+
+ion-grid {
+  padding: 0;
+}
+
+ion-buttons {
+  align-self: center;
+}
+
+ion-searchbar {
+  padding: 0 8px !important;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+ion-col {
+  --ion-grid-column-padding: 0;
+  --ion-grid-column-padding-xs: 0;
+  --ion-grid-column-padding-sm: 0;
+  --ion-grid-column-padding-md: 0;
+}
+
+ion-list.scroll {
+  ion-thumbnail {
+    width: 120px;
+    height: 120px;
+  }
+}

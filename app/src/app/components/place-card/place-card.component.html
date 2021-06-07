@@ -1,0 +1,39 @@
+<ion-card button class="shadow ion-no-margin ion-margin-bottom" [color]="color">
+  <div class="bg-img" offset="10" defaultImage="./assets/img/placeholder1.png" [lazyLoad]="place.image?.url()"
+    [customObservable]="customObservable">
+    <ion-badge class="text-xs" *ngIf="place.isFeatured" color="primary">
+      {{ 'FEATURED_PLACE' | translate }}
+    </ion-badge>
+    <bar-rating *ngIf="place.ratingAvg" class="rating" [rate]="place.ratingAvg" [readOnly]="true" [max]="5" [theme]="'stars'"></bar-rating>
+  </div>
+  <ion-card-content>
+    <div class="ion-text-nowrap">
+      <ion-text>
+        <h3 class="bold ellipsis">{{ place.title }}</h3>
+      </ion-text>
+      <p class="ellipsis text-small">
+        <ion-text color="medium">
+          <span>{{ place.categories.join(' &bull; ') }}</span>
+        </ion-text>
+      </p>
+      <p class="text-small bold">
+        <ion-text color="dark">
+          {{ place.distance(extraParams.location, extraParams.unit) }}&nbsp;
+        </ion-text>
+      </p>
+
+      <div class="flex justify-content-space-between">
+        <ion-chip *ngIf="showStatus" class="ion-no-margin" class="text-small" [color]="getStatusColor(place.status)">
+          <span *ngIf="place.status === 'Pending'">{{ 'PENDING' | translate }}</span>
+          <span *ngIf="place.status === 'Rejected'">{{ 'REJECTED' | translate }}</span>
+          <span *ngIf="place.status === 'Approved'">{{ 'APPROVED' | translate }}</span>
+          <span *ngIf="place.status === 'Expired'">{{ 'EXPIRED' | translate }}</span>
+        </ion-chip>
+        <ion-button strong size="small" *ngIf="showPromoteButton && place.status === 'Approved' && !place.isFeatured" (click)="onPromoteButtonTouchedFn(); $event.stopPropagation();">
+          {{ 'PROMOTE' | translate }}
+          <ion-icon slot="end" name="arrow-up-circle-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ion-card-content>
+</ion-card>
